@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Valentine</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Cairo;
+background:linear-gradient(180deg,#760926,#d9052c,#4e0215);
+min-height:100vh;
+overflow-x:hidden;
+color:#fff;
+}
+
+/* floating hearts */
+.bg{position:fixed;inset:0;pointer-events:none}
+.h{
+position:absolute;
+bottom:-40px;
+opacity:.4;
+animation:up 8s linear infinite;
+}
+@keyframes up{to{transform:translateY(-120vh)}}
+
+/* center */
+.center{
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+flex-direction:column;
+padding:20px;
+}
+
+/* heart password */
+.heartBox{
+width:85%;
+max-width:360px;
+position:relative;
+}
+.heartBox svg{
+width:100%;
+filter:drop-shadow(0 0 30px rgba(255,0,90,.6));
+}
+.passContent{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(-25px); /* يرفع كل المحتوى لفوق */
+}
+
+/* حقل الإدخال */
+input{
+  padding:14px;
+  border-radius:999px;
+  border:none;
+  width:60%;          /* صغّر العرض */
+  text-align:center;
+  margin-top:6px;
+  transform:translateY(-6px);  /* ارفعه لفوق */
+}
+
+/* زرار Unlock */
+button{
+  margin-top:10px;
+  padding:10px 16px;
+  border:none;
+  border-radius:999px;
+  width:50%;          /* مهم: يخليه جوه القلب */
+  font-weight:800;
+  background:#fff;
+  color:#ff2e63;
+  transform:translateY(-2px);  /* ارفعه شوية */
+}
+
+/* page */
+.page{display:none;padding:20px;max-width:420px;margin:auto}
+.show{display:block}
+
+/* counter */
+.counter{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-bottom:20px;
+}
+.cell{
+background:rgba(255,255,255,.18);
+padding:10px 8px;      /* صغر الحجم */
+border-radius:14px;
+text-align:center;
+backdrop-filter:blur(6px);
+font-size:14px;        /* صغر الخط */
+min-width:70px;        /* حجم ثابت */
+}
+
+.counter{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+}
+
+
+/* message */
+.msg{
+background:rgba(255,255,255,.15);
+padding:18px;
+border-radius:20px;
+text-align:center;
+margin-bottom:20px;
+}
+
+/* photo card */
+.card{
+background:rgba(255,255,255,.15);
+padding:12px;
+border-radius:22px;
+margin-bottom:22px;
+text-align:center;
+backdrop-filter:blur(8px);
+}
+.photo{
+width:100%;
+border-radius:18px;
+display:none;
+}
+.star{
+font-size:28px;
+margin:10px;
+cursor:pointer;
+text-shadow:0 0 12px #fff;
+}
+.smallMsg{
+margin-top:10px;
+font-size:14px;
+opacity:.9;
+}
+
+/* buttons */
+.mainBtn{
+display:block;
+margin:20px auto;   /* يخليه في النص */
+background:#fff;
+color:#ff2e63;
+padding:12px 18px;
+border:none;
+border-radius:999px;
+font-weight:800;
+}
+
+.page{
+text-align:center;
+}
+
+.title{
+  margin-bottom:12px;
+  transform:translateY(8px); /* ينزل الكلمة */
+  font-size:20px;
+  text-align:center;
+}
+
+.flipCard{
+  width:100%;
+  max-width:340px;
+  height:360px;          /* ارتفاع ثابت لكل كارت */
+  margin:25px auto;
+  perspective:1000px;
+}
+
+.flipInner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .7s;
+}
+
+.flipCard.flipped .flipInner{
+  transform:rotateY(180deg);
+}
+
+.front, .back{
+  position:absolute;
+  inset:0;
+  border-radius:22px;
+  backface-visibility:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(10px);
+  overflow:hidden;   /* مهم جدًا */
+}
+
+/* ظهر الكارت */
+.back{
+  transform:rotateY(180deg);
+  padding:10px;
+}
+
+/* الصورة جوه الكارت */
+.back img{
+  width:100%;
+  height:100%;
+  object-fit:contain;   /* يمنع القص */
+  border-radius:16px;
+}
+
+/* رسالة تحت الصورة */
+.imgMsg{
+  position:absolute;
+  bottom:10px;
+  background:rgba(0,0,0,.4);
+  padding:6px 12px;
+  border-radius:12px;
+  font-size:13px;
+}
+
+.heartColor{
+  fill:#a50202c0;
+}
+.dateTitle{
+  text-align:center;
+  margin-bottom:10px;
+  font-size:16px;
+  opacity:.9;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<!-- PAGE 1 PASSWORD -->
+<div class="center" id="passPage">
+
+<div class="heartBox">
+<svg viewBox="0 0 512 512">
+<path class="heartColor"
+
+
+
+d="M471.7 73.4c-54.5-46.4-136-38.3-186.4 13.7L256 118.6l-29.3-31.5
+C176.3 35.1 94.8 27 40.3 73.4-23.6 129.3-13.5 229.8 43 285.9l193.5
+199.8c10.5 10.8 27.6 10.8 38.1 0L469 285.9c56.5-56.1 66.6-156.6
+2.7-212.5z"/>
+</svg>
+
+<div class="passContent">
+<h3 class="title">Happy Valentine ❤️‍🔥</h3>
+
+<input id="pass" placeholder="I Love You">
+<button onclick="enter()">💕Unlock💕</button>
+</div>
+</div>
+
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="home">
+<h3 class="dateTitle">💓 عقبال سنين كتير يارب</h3>
+
+<div class="counter">
+  <div class="cell"><div id="s">0</div>ثانية</div> 
+  <div class="cell"><div id="m">0</div>دقيقة</div>
+  <div class="cell"><div id="h">0</div>ساعة</div>
+  <div class="cell"><div id="d">0</div>يوم</div>
+</div>
+
+
+<div class="msg" id="loveMsg"></div>
+
+
+<button class="mainBtn" onclick="showPhotos()">Next💓</button>
+</div>
+
+<!-- PAGE 3 PHOTOS -->
+<div class="page" id="photos">
+
+<div class="flipCard">
+  <div class="flipInner" onclick="flip(this)">
+
+    <div class="front">
+      <div class="star">💝</div>
+    ❤️‍🔥 حياتي
+    </div>
+
+    <div class="back">
+      <img src="images/1.jpg">
+      <div class="imgMsg">❤️ اللي مفيش كلام يوصفها</div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<div class="flipCard">
+  <div class="flipInner" onclick="flip(this)">
+
+    <div class="front">
+      <div class="star">💝</div>
+    🩷 وقلبي
+    </div>
+
+    <div class="back">
+      <img src="images/2.jpg">
+      <div class="imgMsg">💓 اللي مفيش زيها اتنين</div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<div class="flipCard">
+  <div class="flipInner" onclick="flip(this)">
+
+    <div class="front">
+      <div class="star">💝</div>
+    💓 وعمري 
+    </div>
+
+    <div class="back">
+      <img src="images/3.jpg">
+      <div class="imgMsg">💕 اللي بموت فيه</div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="flipCard">
+  <div class="flipInner" onclick="flip(this)">
+
+    <div class="front">
+      <div class="star">💝</div>
+    💖 بحبببببك
+    </div>
+
+    <div class="back">
+      <img src="images/4.jpg">
+      <div class="imgMsg">ي أجمل حد ف حياتي</div>
+    </div>
+
+  </div>
+</div>
+
+
+<button class="mainBtn" onclick="backHome()">Back💓</button>
+
+</div>
+
+<audio id="song" src="heart-song.mp3" loop></audio>
+
+
+<script>
+const PASSWORD="I Love You";
+
+function enter(){
+  if(pass.value === PASSWORD){
+    document.getElementById("passPage").style.display = "none";
+    document.getElementById("home").classList.add("show");
+
+    startTyping();
+
+    // تشغيل الأغنية
+    const song = document.getElementById("song");
+    song.play().catch(()=>{});
+  }
+}
+
+function flip(el){
+  el.parentElement.classList.toggle("flipped");
+}
+
+
+function showPhotos(){
+home.classList.remove("show");
+photos.classList.add("show");
+}
+
+function backHome(){
+photos.classList.remove("show");
+home.classList.add("show");
+}
+
+function toggle(n){
+let img=document.getElementById("p"+n);
+img.style.display= img.style.display=="block"?"none":"block";
+}
+
+/* counter */
+const start = new Date(2025, 5, 25); // 25 يونيو 2025
+
+setInterval(()=>{
+  const now = new Date();
+
+  // الفرق بين دلوقتي والتاريخ
+  let diff = now - start;
+
+  // لو التاريخ في المستقبل خلي العداد يبدأ من صفر
+  if(diff < 0) diff = 0;
+
+  const days = Math.floor(diff / 86400000);
+const hours = Math.floor(diff / 3600000) % 24;
+const minutes = Math.floor(diff / 60000) % 60;
+const seconds = Math.floor(diff / 1000) % 60;
+
+document.getElementById("d").textContent = days;
+document.getElementById("h").textContent = hours;
+document.getElementById("m").textContent = minutes;
+document.getElementById("s").textContent = seconds;
+
+},1000);
+
+
+/* hearts */
+for(let i=0;i<40;i++){
+let e=document.createElement("div");
+e.className="h";
+e.innerHTML="❤️";
+e.style.left=Math.random()*100+"%";
+e.style.animationDuration=(5+Math.random()*5)+"s";
+bg.appendChild(e);
+}
+
+
+const messageText = [
+"ي صدفتي الحلوة وأجمل م أهدتتني الأيام ف ليشهد الحب اني أحبك فوق حب العاشقين حبا",
+"ومفيش عيد علشان احبك انا بحبك من اللحظة اللي شوفتك فيها",
+"<span style='font-weight:800'>وعايز اقولك انتي اول و آخر حب ف حياتي</span>",
+"بحبببببببببببكككككككككككك"
+];
+
+let typingStarted = false;
+
+function startTyping(){
+  if(typingStarted) return;   // يمنع التكرار
+  typingStarted = true;
+
+  const box = document.getElementById("loveMsg");
+  box.innerHTML = "";
+
+  let line = 0;
+  let char = 0;
+
+function typeLine(){
+  if(line >= messageText.length) return;
+
+  const current = messageText[line];
+
+  // لو السطر فيه HTML اكتبه مرة واحدة
+  if(current.includes("<")){
+    box.innerHTML += current + "<br>";
+    line++;
+    setTimeout(typeLine, 400);
+    return;
+  }
+
+  function typeChar(){
+    if(char < current.length){
+      box.innerHTML += current[char];
+      char++;
+      setTimeout(typeChar, 35);
+    }else{
+      box.innerHTML += "<br>";
+      line++;
+      char = 0;
+      setTimeout(typeLine, 400);
+    }
+  }
+
+  typeChar();
+}
+
+
+  typeLine();
+}
+
+
+</script>
+
+</body>
+</html>
