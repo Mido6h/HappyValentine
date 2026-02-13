@@ -463,14 +463,15 @@ function startTyping(){
 function typeLine(){
   if(line >= messageText.length) return;
 
-  const current = messageText[line];
+  let current = messageText[line];
 
-  // لو السطر فيه HTML اكتبه مرة واحدة
-  if(current.includes("<")){
-    box.innerHTML += current + "<br>";
-    line++;
-    setTimeout(typeLine, 400);
-    return;
+  let bold = false;
+
+  // لو السطر فيه span بولد
+  if(current.includes("<span")){
+    bold = true;
+    current = current.replace(/<[^>]+>/g, ""); // يشيل الوسوم
+    box.innerHTML += "<span style='font-weight:800'>";
   }
 
   function typeChar(){
@@ -479,6 +480,7 @@ function typeLine(){
       char++;
       setTimeout(typeChar, 35);
     }else{
+      if(bold) box.innerHTML += "</span>";
       box.innerHTML += "<br>";
       line++;
       char = 0;
@@ -499,3 +501,4 @@ function typeLine(){
 </body>
 
 </html>
+
