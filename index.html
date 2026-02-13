@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Valentine</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+
 
 <style>
 *{box-sizing:border-box}
 body{
 margin:0;
-font-family:Cairo;
+font-family:'Cairo', sans-serif;
 background:linear-gradient(180deg,#760926,#d9052c,#4e0215);
 min-height:100vh;
 overflow-x:hidden;
@@ -236,6 +238,15 @@ text-align:center;
   font-size:16px;
   opacity:.9;
 }
+.boldLine{
+  font-weight:700;
+  font-size:20px;
+}
+
+
+
+
+
 
 
 </style>
@@ -439,19 +450,21 @@ e.style.animationDuration=(5+Math.random()*5)+"s";
 bg.appendChild(e);
 }
 
-
 const messageText = [
 "ي صدفتي الحلوة وأجمل م أهدتتني الأيام ف ليشهد الحب اني أحبك فوق حب العاشقين حبا",
 "ومفيش عيد علشان احبك انا بحبك من اللحظة اللي شوفتك فيها",
-"<span style='font-weight:800'>وعايز اقولك انتي اول و آخر حب ف حياتي</span>",
-"<span style='font-weight:800'>ومحدش هياخد مكانك ف قلبي</span>",
+"وعايز اقولك انتي اول و آخر حب ف حياتي",
+"ومحدش هياخد مكانك ف قلبي",
 "بحبك ي أعظم اختياراتي بحبك بكل تفاصيلك"
 ];
+
+
+const boldLines = [2,3]; 
 
 let typingStarted = false;
 
 function startTyping(){
-  if(typingStarted) return;   // يمنع التكرار
+  if(typingStarted) return;
   typingStarted = true;
 
   const box = document.getElementById("loveMsg");
@@ -460,45 +473,55 @@ function startTyping(){
   let line = 0;
   let char = 0;
 
-function typeLine(){
-  if(line >= messageText.length) return;
+  function typeLine(){
+    if(line >= messageText.length) return;
 
-  let current = messageText[line];
+    let current = messageText[line];
+    let isBold = boldLines.includes(line);
 
-  let bold = false;
-
-  // لو السطر فيه span بولد
-  if(current.includes("<span")){
-    bold = true;
-    current = current.replace(/<[^>]+>/g, ""); // يشيل الوسوم
-    box.innerHTML += "<span style='font-weight:800'>";
-  }
-
-  function typeChar(){
-    if(char < current.length){
-      box.innerHTML += current[char];
-      char++;
-      setTimeout(typeChar, 35);
-    }else{
-      if(bold) box.innerHTML += "</span>";
-      box.innerHTML += "<br>";
-      line++;
-      char = 0;
-      setTimeout(typeLine, 400);
+    // لو السطر بولد افتح span مؤقت
+    if(isBold){
+      box.innerHTML += "<span class='boldLine' id='currentBold'></span>";
     }
+
+    function typeChar(){
+      if(char < current.length){
+
+        if(isBold){
+          document.getElementById("currentBold").innerHTML += current[char];
+        }else{
+          box.innerHTML += current[char];
+        }
+
+        char++;
+        setTimeout(typeChar,35);
+
+      }else{
+
+        // نهاية السطر
+        if(isBold){
+          box.innerHTML += "</span><br>";
+          const old = document.getElementById("currentBold");
+          if(old) old.removeAttribute("id");
+        }else{
+          box.innerHTML += "<br>";
+        }
+
+        line++;
+        char = 0;
+        setTimeout(typeLine,400);
+      }
+    }
+
+    typeChar();
   }
-
-  typeChar();
-}
-
 
   typeLine();
 }
 
 
+
 </script>
 
 </body>
-
 </html>
-
